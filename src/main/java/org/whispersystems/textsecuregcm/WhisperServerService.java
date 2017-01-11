@@ -193,10 +193,13 @@ public class WhisperServerService extends Application<WhisperServerConfiguration
     TurnTokenGenerator       turnTokenGenerator  = new TurnTokenGenerator(config.getTurnConfiguration());
     Optional<byte[]>         authorizationKey    = config.getRedphoneConfiguration().getAuthorizationKey();
 
-    environment.lifecycle().manage(apnFallbackManager);
     environment.lifecycle().manage(pubSubManager);
-    environment.lifecycle().manage(feedbackHandler);
     environment.lifecycle().manage(pushSender);
+
+    if (config.getPushConfiguration().isEnabled()) {
+      environment.lifecycle().manage(apnFallbackManager);
+      environment.lifecycle().manage(feedbackHandler);
+    }
 
     AttachmentController attachmentController = new AttachmentController(rateLimiters, federatedClientManager, urlSigner);
     KeysControllerV1     keysControllerV1     = new KeysControllerV1(rateLimiters, keys, accountsManager, federatedClientManager);
@@ -235,7 +238,7 @@ public class WhisperServerService extends Application<WhisperServerConfiguration
       WebSocketEnvironment provisioningEnvironment = new WebSocketEnvironment(environment, config);
       provisioningEnvironment.setConnectListener(new ProvisioningConnectListener(pubSubManager));
       provisioningEnvironment.jersey().register(new KeepAliveController(pubSubManager));
-      
+
       WebSocketResourceProviderFactory webSocketServlet    = new WebSocketResourceProviderFactory(webSocketEnvironment   );
       WebSocketResourceProviderFactory provisioningServlet = new WebSocketResourceProviderFactory(provisioningEnvironment);
 

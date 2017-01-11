@@ -27,16 +27,18 @@ public class PushServiceClient {
 
   private final Logger logger = LoggerFactory.getLogger(PushServiceClient.class);
 
-  private final Client client;
-  private final String host;
-  private final int    port;
-  private final String authorization;
+  private final boolean PushServerEnabled;
+  private final Client  client;
+  private final String  host;
+  private final int     port;
+  private final String  authorization;
 
   public PushServiceClient(Client client, PushConfiguration config) {
-    this.client        = client;
-    this.host          = config.getHost();
-    this.port          = config.getPort();
-    this.authorization = getAuthorizationHeader(config.getUsername(), config.getPassword());
+    this.PushServerEnabled = config.isEnabled();
+    this.client            = client;
+    this.host              = config.getHost();
+    this.port              = config.getPort();
+    this.authorization     = getAuthorizationHeader(config.getUsername(), config.getPassword());
   }
 
   public void send(GcmMessage message) throws TransientPushFailureException {
@@ -56,6 +58,11 @@ public class PushServiceClient {
   }
 
   private void sendPush(String path, Object entity) throws TransientPushFailureException {
+    if (!PushServerEnabled) {
+       logger.warn("Push error: can't deliver message, PushServer disabled.");
+       throw new TransientPushFailureException("Push error: can't deliver message, PushServer disabled.");
+    }
+
     try {
       Response response = client.target("http://" + host + ":" + port)
                                 .path(path)

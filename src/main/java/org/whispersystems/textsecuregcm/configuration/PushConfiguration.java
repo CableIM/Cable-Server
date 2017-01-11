@@ -7,24 +7,31 @@ import javax.validation.constraints.Min;
 
 public class PushConfiguration {
   @JsonProperty
+  private boolean enabled = true;
+
+  @JsonProperty
   @NotEmpty
-  private String host;
+  private String host = "127.0.0.1";
 
   @JsonProperty
   @Min(1)
-  private int port;
+  private int port = 9090;
 
   @JsonProperty
   @NotEmpty
-  private String username;
+  private String username = "default";
 
   @JsonProperty
   @NotEmpty
-  private String password;
+  private String password = "default";
 
   @JsonProperty
   @Min(0)
   private int queueSize = 200;
+
+  public boolean isEnabled() {
+    return enabled;
+  }
 
   public String getHost() {
     return host;
