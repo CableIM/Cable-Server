@@ -75,10 +75,12 @@ public class UrlSigner {
       clientBuilder.setEndpointConfiguration(endpointConfiguration);
     }
 
+    clientBuilder.enableAccelerateMode();
+
     AmazonS3 client = clientBuilder.build();
 
     GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucket, String.valueOf(attachmentId), method);
-
+    
     request.setExpiration(new Date(System.currentTimeMillis() + DURATION));
     request.setContentType("application/octet-stream");
 
