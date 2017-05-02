@@ -261,7 +261,7 @@ public class AccountController {
 
     device.setApnId(null);
     device.setVoipApnId(null);
-    device.setGcmId(registrationId.getGcmRegistrationId());
+//nopush    device.setGcmId(registrationId.getGcmRegistrationId());
 
     if (registrationId.isWebSocketChannel()) device.setFetchesMessages(true);
     else                                     device.setFetchesMessages(false);
@@ -285,8 +285,8 @@ public class AccountController {
   @Consumes(MediaType.APPLICATION_JSON)
   public void setApnRegistrationId(@Auth Account account, @Valid ApnRegistrationId registrationId) {
     Device device = account.getAuthenticatedDevice().get();
-    device.setApnId(registrationId.getApnRegistrationId());
-    device.setVoipApnId(registrationId.getVoipRegistrationId());
+//nopush    device.setApnId(registrationId.getApnRegistrationId());
+//nopush    device.setVoipApnId(registrationId.getVoipRegistrationId());
     device.setGcmId(null);
     device.setFetchesMessages(true);
     accounts.update(account);
