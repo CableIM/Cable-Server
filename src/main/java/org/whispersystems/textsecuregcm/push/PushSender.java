@@ -163,8 +163,8 @@ public class PushSender implements Managed {
 
   @Override
   public void start() throws Exception {
-    apnSender.start();
-    gcmSender.start();
+//nopush    apnSender.start();
+//nopush    gcmSender.start();
   }
 
   @Override
@@ -172,7 +172,7 @@ public class PushSender implements Managed {
     executor.shutdown();
     executor.awaitTermination(5, TimeUnit.MINUTES);
 
-    apnSender.stop();
-    gcmSender.stop();
+//nopush    apnSender.stop();
+//nopush    gcmSender.stop();
   }
 }
