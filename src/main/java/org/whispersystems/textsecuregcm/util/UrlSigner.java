@@ -37,17 +37,19 @@ public class UrlSigner {
 
   private final AWSCredentials credentials;
   private final boolean pathstyle;
+  private final boolean noaccelerate;
   private final String bucket;
   private final String endpoint;
   private final String region;
   private final String signer;
 
   public UrlSigner(S3Configuration config) {
-    this.credentials = new BasicAWSCredentials(config.getAccessKey(), config.getAccessSecret());
-    this.pathstyle   = config.getPathStyleAccess();
-    this.bucket      = config.getAttachmentsBucket();
-    this.endpoint    = config.getEndpoint();
-    this.signer      = config.getSignerAlgorithm();
+    this.credentials  = new BasicAWSCredentials(config.getAccessKey(), config.getAccessSecret());
+    this.pathstyle    = config.getPathStyleAccess();
+    this.noaccelerate = config.getDisableAccelerate();
+    this.bucket       = config.getAttachmentsBucket();
+    this.endpoint     = config.getEndpoint();
+    this.signer       = config.getSignerAlgorithm();
 
     if (config.getRegion() != null && !config.getRegion().isEmpty())
       this.region = config.getRegion();
@@ -66,7 +68,6 @@ public class UrlSigner {
     }
 
     clientBuilder.setCredentials(new AWSStaticCredentialsProvider(credentials));
-    clientBuilder.enableAccelerateMode();
     clientBuilder.setPathStyleAccessEnabled(pathstyle);
 
     if (endpoint != null && !endpoint.isEmpty()) {
@@ -76,6 +77,9 @@ public class UrlSigner {
     } else {
       clientBuilder.setRegion(region);
     }
+
+    if (!noaccelerate)
+      clientBuilder.enableAccelerateMode();
 
     AmazonS3 client = clientBuilder.build();
 

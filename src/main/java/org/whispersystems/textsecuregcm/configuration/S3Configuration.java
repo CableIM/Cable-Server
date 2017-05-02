@@ -45,6 +45,9 @@ public class S3Configuration {
   @JsonProperty
   private boolean pathStyleAccess = false;
 
+  @JsonProperty
+  private boolean disableAccelerate = false;
+
   public String getAccessKey() {
     return accessKey;
   }
@@ -71,6 +74,10 @@ public class S3Configuration {
 
   public boolean getPathStyleAccess() {
     return pathStyleAccess;
+  }
+
+  public boolean getDisableAccelerate() {
+    return disableAccelerate;
   }
 
 }
