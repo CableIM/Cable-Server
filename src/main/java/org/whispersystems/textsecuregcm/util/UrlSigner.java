@@ -36,7 +36,7 @@ public class UrlSigner {
   private static final long   DURATION = 60 * 60 * 1000;
 
   private final AWSCredentials credentials;
-  private final Boolean pathstyle;
+  private final boolean pathstyle;
   private final String bucket;
   private final String endpoint;
   private final String region;
@@ -65,11 +65,9 @@ public class UrlSigner {
       clientBuilder.setClientConfiguration(clientConfiguration);
     }
 
-    if (pathstyle != null) {
-      clientBuilder.setPathStyleAccessEnabled(pathstyle);
-    }
-
     clientBuilder.setCredentials(new AWSStaticCredentialsProvider(credentials));
+    clientBuilder.enableAccelerateMode();
+    clientBuilder.setPathStyleAccessEnabled(pathstyle);
 
     if (endpoint != null && !endpoint.isEmpty()) {
       AwsClientBuilder.EndpointConfiguration endpointConfiguration =
@@ -78,8 +76,6 @@ public class UrlSigner {
     } else {
       clientBuilder.setRegion(region);
     }
-
-    clientBuilder.enableAccelerateMode();
 
     AmazonS3 client = clientBuilder.build();
 

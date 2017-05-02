@@ -43,7 +43,7 @@ public class S3Configuration {
   private String signerAlgorithm;
 
   @JsonProperty
-  private Boolean pathStyleAccess;
+  private boolean pathStyleAccess = false;
 
   public String getAccessKey() {
     return accessKey;
@@ -69,7 +69,7 @@ public class S3Configuration {
     return signerAlgorithm;
   }
 
-  public Boolean getPathStyleAccess() {
+  public boolean getPathStyleAccess() {
     return pathStyleAccess;
   }
 
