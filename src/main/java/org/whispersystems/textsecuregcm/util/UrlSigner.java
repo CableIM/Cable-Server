@@ -47,8 +47,13 @@ public class UrlSigner {
     this.pathstyle   = config.getPathStyleAccess();
     this.bucket      = config.getAttachmentsBucket();
     this.endpoint    = config.getEndpoint();
-    this.region      = config.getRegion();
     this.signer      = config.getSignerAlgorithm();
+
+    if (config.getRegion() != null && !config.getRegion().isEmpty())
+      this.region = config.getRegion();
+    else
+      // Amazon SDK default
+      this.region = "us-east-1";
   }
 
   public URL getPreSignedUrl(long attachmentId, HttpMethod method) {
@@ -66,13 +71,12 @@ public class UrlSigner {
 
     clientBuilder.setCredentials(new AWSStaticCredentialsProvider(credentials));
 
-    if (region != null && (endpoint == null || endpoint.isEmpty())) {
-      clientBuilder.setRegion(region);
-    } else if (endpoint != null && !endpoint.isEmpty()) {
-      // region can be null or empty
+    if (endpoint != null && !endpoint.isEmpty()) {
       AwsClientBuilder.EndpointConfiguration endpointConfiguration =
           new AwsClientBuilder.EndpointConfiguration(endpoint, region);
       clientBuilder.setEndpointConfiguration(endpointConfiguration);
+    } else {
+      clientBuilder.setRegion(region);
     }
 
     clientBuilder.enableAccelerateMode();
