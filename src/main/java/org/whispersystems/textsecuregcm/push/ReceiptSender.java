@@ -43,6 +43,22 @@ public class ReceiptSender {
     }
   }
 
+  public void deliverRelayedReceipt(String source, int sourceDeviceId, String destination, long messageId)
+      throws NotPushRegisteredException, TransientPushFailureException, NoSuchUserException
+  {
+    Account          destinationAccount = getDestinationAccount(destination);
+    Set<Device>      destinationDevices = destinationAccount.getDevices();
+    Envelope.Builder message            = Envelope.newBuilder()
+                                                  .setSource(source)
+                                                  .setSourceDevice(sourceDeviceId)
+                                                  .setTimestamp(messageId)
+                                                  .setType(Envelope.Type.RECEIPT);
+
+    for (Device destinationDevice : destinationDevices) {
+      pushSender.sendMessage(destinationAccount, destinationDevice, message.build(), true);
+    }
+  }
+
   private void sendRelayedReceipt(Account source, String destination, long messageId, String relay)
       throws NoSuchUserException, IOException
   {

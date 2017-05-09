@@ -2,6 +2,7 @@ package org.whispersystems.textsecuregcm.controllers;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
+import org.whispersystems.textsecuregcm.federation.FederatedPeer;
 import org.whispersystems.textsecuregcm.push.NotPushRegisteredException;
 import org.whispersystems.textsecuregcm.push.ReceiptSender;
 import org.whispersystems.textsecuregcm.push.TransientPushFailureException;
@@ -37,6 +38,25 @@ public class ReceiptController {
   {
     try {
       receiptSender.sendReceipt(source, destination, messageId, relay);
+    } catch (NoSuchUserException | NotPushRegisteredException e) {
+      throw new WebApplicationException(Response.Status.NOT_FOUND);
+    } catch (TransientPushFailureException e) {
+      throw new IOException(e);
+    }
+  }
+
+  @Timed
+  @PUT
+  @Path("/{source}/{sourceDeviceId}/{destination}/{messageId}")
+  public void sendDeliveryReceipt(@Auth                        FederatedPeer peer,
+                                  @PathParam("source")         String source,
+                                  @PathParam("sourceDeviceId") int sourceDeviceId,
+                                  @PathParam("destination")    String destination,
+                                  @PathParam("messageId")      long messageId)
+      throws IOException
+  {
+    try {
+      receiptSender.deliverRelayedReceipt(source, sourceDeviceId, destination, messageId);
     } catch (NoSuchUserException | NotPushRegisteredException e) {
       throw new WebApplicationException(Response.Status.NOT_FOUND);
     } catch (TransientPushFailureException e) {
